@@ -34,42 +34,89 @@ una instalación idéntica a la que se probó antes de publicar este reto.
 
 ## El reto
 
-Esta pantalla hoy solo está terminada para **desktop grande**. Tu trabajo es llevarla a un
-diseño responsive real, sin perder la identidad visual (colores, glass, tipografía).
+Esta es la pantalla del **Directorio** de SEEKET, tal como se ve hoy: funcional, pero
+visualmente sencilla y sin adaptar a pantallas chicas. Es una de las primeras cosas que ve
+alguien que llega a la plataforma, así que importa que se sienta cuidada.
 
-**Breakpoints obligatorios a resolver:**
+Tu trabajo es dejarla mejor.
 
-- **375px (teléfono).** Hoy, en este ancho, el panel de filtros y el buscador **directamente
-  desaparecen** (viven en un `<aside class="hidden lg:flex">`) y la tarjeta central se
-  desborda. Ese es el punto de partida — no es que se te haya olvidado copiar un archivo.
-- **768px (tablet).** Punto intermedio entre el layout de 3 columnas de escritorio y el de
-  teléfono.
+### Qué queremos ver
 
-**La pregunta que más nos importa:** en el layout actual conviven tres paneles — filtros
-(izquierda), el feed central de video + ficha, y ningún cuarto elemento más. Cuando ya no caben
-lado a lado, **¿qué decisión de diseño tomás?** ¿Los filtros se vuelven un drawer? ¿Un bottom
-sheet? ¿Se colapsan en un botón flotante? Mostranos tu razonamiento, no solo que "ya no se
-rompe".
+**Diseño visual.** Paleta de colores, tipografía, espaciado, jerarquía. Buscamos algo limpio y
+minimalista que no se sienta como una plantilla genérica. Tenés libertad creativa total — si tu
+propuesta cambia el rumbo de lo que hay hoy, mejor, siempre que puedas explicar por qué.
 
-**Qué podés tocar:** todo lo visual — colores, tipografía, espaciado, jerarquía, animaciones,
-el layout completo. Podés reorganizar componentes, agregar breakpoints, y si querés estresar el
-layout con más contenido, podés duplicar entradas en `data/perfiles.ts` (hay un perfil con
-nombre y título muy largos a propósito — fijate cómo se comporta).
+**Responsive real.** Que funcione bien en:
+- **375px** (teléfono)
+- **768px** (tablet)
+- Desktop (como está ahora)
 
-**Qué no hace falta que resuelvas:** el detalle de servicio/perfil (el clic no hace nada, ver
-arriba), autenticación, y cualquier lógica de backend.
+Probalo con F12 → modo dispositivo en Chrome. No basta con que "no se rompa": queremos que se
+sienta pensado para cada tamaño.
 
-## Cómo entregar
+### La pregunta clave
 
-1. Fork de este repositorio.
-2. Hacé tus cambios en tu fork.
-3. Entregá un link funcionando: preview de Vercel, CodeSandbox, o instrucciones claras para
-   correr tu fork localmente.
+En desktop, la pantalla tiene tres paneles lado a lado: **filtros**, **panel central**, y
+**ficha del perfil**. En un teléfono de 375px no caben los tres al mismo tiempo.
 
-**Plazo:** lunes por la noche.
+**¿Qué hacés con ellos?** Esa decisión es lo que más nos interesa ver. Apilar todo hacia abajo
+es una respuesta válida, pero probablemente no la mejor. Mostranos tu criterio.
 
-Este es un reto comparativo entre varios candidatos. El trabajo hecho acá cuenta dentro del
-proyecto final para quien sea seleccionado.
+Ojo también con los textos largos: hay perfiles con nombres y títulos de servicio extensos a
+propósito. Fijate cómo se comporta el layout con ellos.
 
-<!-- TODO(Javier): términos de propiedad del trabajo entregado por los candidatos que no sean
-     seleccionados — decidir antes de publicar el repo. -->
+### Alcance
+
+Los componentes que importan son: **los filtros**, **la barra de búsqueda**, **el panel
+central**, y **la ficha del perfil**. Nada más.
+
+Los filtros **no necesitan filtrar de verdad** — es una prueba de diseño, no de lógica. Que se
+vean bien y se abran/cierren es suficiente. No pierdas tiempo ahí.
+
+### Cómo entregar
+
+1. Hacé **fork** de este repo (botón arriba a la derecha)
+2. Trabajá en tu copia
+3. Mandame **el link de tu fork** + un link donde se vea funcionando (Vercel preview,
+   CodeSandbox, o el que prefieras)
+
+Si querés, agregá 2-3 líneas explicando tus decisiones de diseño. No es obligatorio, pero ayuda.
+
+### Plazo
+
+**Lunes 24 de agosto, 11:59 pm.**
+
+Tenés el fin de semana completo. Está pensado para 1-2 días de trabajo, no más — si te está
+tomando mucho más, probablemente te estás yendo de alcance.
+
+### Herramientas
+
+Podés usar las que quieras, incluidas herramientas de IA (v0, Claude Code, Cursor, lo que
+manejes). Nos interesa el resultado y tu criterio, no cómo llegaste ahí.
+
+## Sobre el trabajo que hacés acá
+
+Queremos ser transparentes, porque nos parece lo justo:
+
+**Esta es una prueba comparativa.** Hay varios candidatos trabajando sobre este mismo repo, en
+paralelo. Vamos a revisar todas las propuestas y seleccionar hasta dos personas para continuar
+con el proyecto completo.
+
+**Tu trabajo es tuyo.** Si no quedás seleccionado, lo que hiciste acá te pertenece por
+completo. Podés publicarlo, ponerlo en tu portafolio, mostrarlo a otros clientes, lo que
+quieras. Nosotros no vamos a usar tu propuesta, ni total ni parcialmente, ni vamos a tomar
+ideas de ella para el diseño final de la plataforma.
+
+**Si quedás seleccionado**, lo que hiciste en esta prueba se integra al proyecto real y
+**cuenta como trabajo pagado** dentro del precio que acordemos. No es trabajo gratis: es el
+primer pedazo del proyecto, hecho por adelantado.
+
+**Puedes usar esto en tu portafolio en cualquier caso**, quedes o no. Solo te pedimos que
+aclares que fue una prueba técnica para SEEKET, no un trabajo publicado en la plataforma.
+
+**Respondemos a todos.** Si mandaste tu propuesta, vas a recibir una respuesta con nuestra
+decisión, hayas quedado o no. No vamos a dejar a nadie esperando.
+
+---
+
+Cualquier duda del reto, escribime directo. Gracias por tomarte el tiempo.
