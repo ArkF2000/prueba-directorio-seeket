@@ -1,0 +1,26 @@
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import "./globals.css";
+import SiteHeader from "@/components/SiteHeader";
+
+const inter = Inter({ subsets: ["latin"] });
+
+export const metadata: Metadata = {
+  title: "Reto de diseño — Directorio SEEKET",
+  description: "Prueba técnica de UX/UI: pantalla del Directorio, datos ficticios.",
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="es">
+      <body className={inter.className}>
+        <SiteHeader />
+        {children}
+      </body>
+    </html>
+  );
+}
