@@ -138,7 +138,7 @@ export default function FilterMiniWizard({
         type="button"
         onClick={onToggle}
         aria-expanded={open}
-        className={`flex w-full items-center gap-2 rounded-lg border px-2.5 py-2 text-left transition-colors ${
+        className={`focus-ring flex w-full items-center gap-2 rounded-lg border px-2.5 py-2 text-left transition-colors ${
           open
             ? 'border-seeket-red-vibrant/35 bg-white/[0.1]'
             : 'border-white/10 bg-white/[0.04] hover:border-white/20 hover:bg-white/[0.07]'

@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import AnimatedBubbles from '@/components/AnimatedBubbles';
 import FiltersPanel from '@/components/FiltersPanel';
+import MobileFiltersSheet from '@/components/MobileFiltersSheet';
 import {
   DEFAULT_DIRECTORIO_FILTERS,
   type DirectorioFilters,
@@ -10,7 +11,7 @@ import {
 import VideoFeed from '@/components/VideoFeed';
 import { PERFILES_MOCK } from '@/data/perfiles';
 import type { PublicServiceEntry } from '@/lib/types';
-import { Sparkles, Search } from 'lucide-react';
+import { Sparkles, Search, SlidersHorizontal } from 'lucide-react';
 
 type Filters = DirectorioFilters;
 
@@ -75,6 +76,20 @@ function applyClientSideFilters(services: PublicServiceEntry[], filters: Filters
   return filtered;
 }
 
+/** Cuenta de filtros activos, para el badge del botón flotante en mobile. */
+function countActiveFilters(filters: Filters): number {
+  let count = 0;
+  count += filters.profileTier.length;
+  count += filters.serviceLevel.length;
+  count += filters.countryCodes.length;
+  count += filters.category.length;
+  count += filters.microCategory.length;
+  count += filters.languages.length;
+  if (filters.talentType) count += 1;
+  if (filters.budgetType) count += 1;
+  return count;
+}
+
 function DirectorioLoading() {
   return (
     <div className="flex h-[calc(100vh-3.5rem)] min-h-0 items-center justify-center">
@@ -92,6 +107,7 @@ export default function DirectorioPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [filters, setFilters] = useState<Filters>({ ...DEFAULT_DIRECTORIO_FILTERS });
   const [loading, setLoading] = useState(true);
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
   useEffect(() => {
     const t = setTimeout(() => {
@@ -124,6 +140,8 @@ export default function DirectorioPage() {
     [searchQuery, filters],
   );
 
+  const activeFilterCount = useMemo(() => countActiveFilters(filters), [filters]);
+
   // El reto es solo la pantalla del feed: el clic conserva su afordancia visual
   // (cursor, hover, focus ring) pero no navega a ningún lado.
   const handleViewStrategy = useCallback((_service: PublicServiceEntry) => {}, []);
@@ -136,7 +154,8 @@ export default function DirectorioPage() {
   return (
     <div className="relative h-[calc(100vh-3.5rem)] min-h-0 overflow-hidden">
       <AnimatedBubbles />
-      <main className="relative z-10 flex h-full min-h-0 gap-3 pl-4 pr-3 pb-4 pt-3 sm:gap-4 sm:pl-5 sm:pr-4 sm:pb-5 sm:pt-4">
+      <main className="relative z-10 flex h-full min-h-0 gap-3 pl-4 pr-3 pb-4 pt-3 sm:gap-4 sm:pl-5 sm:pr-4 sm:pb-5 sm:pt-4 lg:pb-5">
+        {/* ---------- Sidebar de filtros — solo desktop (lg+), sin cambios ---------- */}
         <aside className="hidden min-h-0 lg:flex lg:w-[15.5rem] lg:shrink-0 lg:flex-col lg:gap-2 xl:w-[16.5rem]">
           <div className="flex shrink-0 flex-col">
             <label className="mb-1.5 block text-xs font-semibold text-white/75">Buscar por nombre</label>
@@ -155,23 +174,61 @@ export default function DirectorioPage() {
             <FiltersPanel filters={filters} onFiltersChange={setFilters} />
           </div>
         </aside>
-        <div className="flex-1 min-h-0 overflow-hidden flex flex-col">
-          {filteredServices.length === 0 ? (
-            <div className="flex items-center justify-center h-full">
-              <div className="text-center">
-                <p className="text-white/50 text-sm">No hay servicios que coincidan.</p>
-              </div>
+
+        <div className="flex flex-1 min-h-0 flex-col gap-2 overflow-hidden">
+          {/* ---------- Barra superior — solo mobile/tablet (<lg): búsqueda + botón de filtros ---------- */}
+          <div className="flex shrink-0 items-center gap-2 lg:hidden md:mx-auto md:w-full md:max-w-[430px]">
+            <div className="relative flex-1">
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-white/45" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Busca por nombre o servicio…"
+                className="w-full rounded-xl border border-white/12 bg-white/[0.06] py-2.5 pl-10 pr-3 text-sm text-white placeholder:text-white/35 backdrop-blur-xl transition-all focus:border-seeket-red-vibrant/40 focus:outline-none focus:ring-2 focus:ring-seeket-red-vibrant/30"
+              />
             </div>
-          ) : (
-            <VideoFeed
-              services={filteredServices}
-              onViewStrategy={handleViewStrategy}
-              onViewProfile={handleViewProfile}
-              resultsKey={resultsKey}
-            />
-          )}
+            <button
+              type="button"
+              onClick={() => setMobileFiltersOpen(true)}
+              aria-label="Abrir filtros"
+              className="focus-ring relative flex shrink-0 items-center justify-center rounded-xl border border-white/12 bg-white/[0.06] p-2.5 text-white/85 backdrop-blur-xl transition-colors hover:bg-white/[0.12]"
+            >
+              <SlidersHorizontal className="h-4 w-4" />
+              {activeFilterCount > 0 && (
+                <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-seeket-red-vibrant px-1 text-[9px] font-bold text-white nums">
+                  {activeFilterCount}
+                </span>
+              )}
+            </button>
+          </div>
+
+          <div className="flex-1 min-h-0 overflow-hidden flex flex-col">
+            {filteredServices.length === 0 ? (
+              <div className="flex items-center justify-center h-full">
+                <div className="text-center">
+                  <p className="text-white/50 text-sm">No hay servicios que coincidan.</p>
+                </div>
+              </div>
+            ) : (
+              <VideoFeed
+                services={filteredServices}
+                onViewStrategy={handleViewStrategy}
+                onViewProfile={handleViewProfile}
+                resultsKey={resultsKey}
+              />
+            )}
+          </div>
         </div>
       </main>
+
+      <MobileFiltersSheet
+        open={mobileFiltersOpen}
+        onClose={() => setMobileFiltersOpen(false)}
+        filters={filters}
+        onFiltersChange={setFilters}
+        resultCount={filteredServices.length}
+      />
     </div>
   );
 }

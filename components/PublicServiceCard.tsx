@@ -62,7 +62,7 @@ export default function PublicServiceCard({ service, onOpen, onOpenProfile }: Pu
       >
         <GlassCard variant="strong" className="w-full border-2 border-white/20 p-3">
           <div className="flex items-start justify-between gap-2">
-            <p className="min-w-0 text-base font-bold leading-tight text-white">
+            <p className="min-w-0 flex-1 text-base font-bold leading-tight text-white" title={service.display_name ?? undefined}>
               {service.display_name ?? 'Proveedor'}
               <ProfileProgressionSquare tierLevel={service.tier_level} />
             </p>
@@ -73,7 +73,7 @@ export default function PublicServiceCard({ service, onOpen, onOpenProfile }: Pu
             )}
           </div>
           {roleLine && (
-            <p className="mt-1 text-[11px] leading-snug text-white/60">{roleLine}</p>
+            <p className="mt-1 line-clamp-1 text-[11px] leading-snug text-white/60">{roleLine}</p>
           )}
           {countryName && (
             <p className="mt-1.5 inline-flex items-center gap-1.5 text-[11px] leading-snug text-white/55">
@@ -109,10 +109,13 @@ export default function PublicServiceCard({ service, onOpen, onOpenProfile }: Pu
       >
         <GlassCard
           variant="strong"
-          className="flex h-full min-h-0 w-full flex-col gap-2 overflow-hidden border-2 border-white/20 p-3"
+          className="custom-scrollbar flex h-full min-h-0 w-full flex-col gap-2 overflow-y-auto border-2 border-white/20 p-3"
         >
         <div className="flex shrink-0 items-stretch gap-2.5">
-          <h2 className="min-w-0 flex-1 text-sm font-bold leading-snug text-white">
+          <h2
+            className="line-clamp-3 min-w-0 flex-1 text-sm font-bold leading-snug text-white"
+            title={service.service_title}
+          >
             {service.service_title}
             <ServiceProgressionSquare activeLevel={service.active_service_level} />
           </h2>

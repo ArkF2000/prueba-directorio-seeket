@@ -179,7 +179,7 @@ export default function FiltersPanel({ filters, onFiltersChange }: FiltersPanelP
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="w-full rounded-lg border border-white/12 bg-white/[0.06] py-1.5 pl-8 pr-2 text-[11px] text-white placeholder:text-white/35 focus:border-seeket-red-vibrant/35 focus:outline-none"
+        className="focus-ring w-full rounded-lg border border-white/12 bg-white/[0.06] py-1.5 pl-8 pr-2 text-[11px] text-white placeholder:text-white/35 focus:border-seeket-red-vibrant/35"
       />
     </div>
   );
@@ -200,7 +200,7 @@ export default function FiltersPanel({ filters, onFiltersChange }: FiltersPanelP
                 onClick={() =>
                   updateFilter('budgetType', filters.budgetType === 'hourly' ? null : 'hourly')
                 }
-                className={`flex-1 rounded-lg px-2 py-1.5 text-[10px] font-semibold transition-all sm:text-[11px] ${
+                className={`focus-ring flex-1 rounded-lg px-2 py-1.5 text-[10px] font-semibold transition-all sm:text-[11px] ${
                   filters.budgetType === 'hourly'
                     ? 'bg-seeket-red-vibrant text-white'
                     : 'bg-white/[0.08] hover:bg-white/[0.14]'
@@ -213,7 +213,7 @@ export default function FiltersPanel({ filters, onFiltersChange }: FiltersPanelP
                 onClick={() =>
                   updateFilter('budgetType', filters.budgetType === 'project' ? null : 'project')
                 }
-                className={`flex-1 rounded-lg px-2 py-1.5 text-[10px] font-semibold transition-all sm:text-[11px] ${
+                className={`focus-ring flex-1 rounded-lg px-2 py-1.5 text-[10px] font-semibold transition-all sm:text-[11px] ${
                   filters.budgetType === 'project'
                     ? 'bg-seeket-red-vibrant text-white'
                     : 'bg-white/[0.08] hover:bg-white/[0.14]'
@@ -365,7 +365,7 @@ export default function FiltersPanel({ filters, onFiltersChange }: FiltersPanelP
               <button
                 type="button"
                 onClick={() => updateFilter('talentType', null)}
-                className="mt-2 text-[10px] font-medium text-white/45 underline-offset-2 hover:text-white/70 hover:underline"
+                className="focus-ring mt-2 rounded text-[10px] font-medium text-white/45 underline-offset-2 hover:text-white/70 hover:underline"
               >
                 Limpiar
               </button>

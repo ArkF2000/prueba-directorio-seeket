@@ -2,9 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Colores SEEKET (evitar @apply de custom classes en layers) */
+/*
+  Sistema de color — redise\u00f1o SEEKET.
+  Antes: fondo gris-marr\u00f3n (#161716) + rojo/naranja usados como wallpaper (burbujas).
+  Ahora: negro real como base, rojo/naranja reservados como ACENTO de marca
+  (CTAs, precios, estados activos), no como fondo. Da lectura "producto/dev-tool",
+  no "landing de agencia".
+*/
 :root {
-  --seeket-dark: #161716;
+  --seeket-dark: #0a0a0c;
+  --seeket-surface: #111114;
+  --seeket-surface-2: #17171b;
+  --seeket-border: rgba(255, 255, 255, 0.08);
+  --seeket-border-strong: rgba(255, 255, 255, 0.14);
   --seeket-red-dark: #9a2e2e;
   --seeket-red-vibrant: #fa3934;
   --seeket-orange: #ffac31;
@@ -12,7 +22,10 @@
 
 @layer base {
   * {
-    border-color: var(--seeket-dark);
+    border-color: var(--seeket-border);
+  }
+  html {
+    color-scheme: dark;
   }
   body {
     background-color: var(--seeket-dark);
@@ -21,82 +34,160 @@
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
   }
+  ::selection {
+    background-color: rgba(250, 57, 52, 0.35);
+    color: white;
+  }
 }
 
 @layer components {
   .glass-card {
-    @apply backdrop-blur-xl rounded-2xl shadow-2xl;
-    background-color: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    @apply backdrop-blur-xl rounded-2xl;
+    background-color: rgba(255, 255, 255, 0.035);
+    border: 1px solid var(--seeket-border);
+    box-shadow:
+      0 1px 0 0 rgba(255, 255, 255, 0.04) inset,
+      0 20px 40px -24px rgba(0, 0, 0, 0.7);
   }
 
   .glass-card-strong {
-    @apply backdrop-blur-2xl rounded-2xl shadow-2xl;
-    background-color: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    @apply backdrop-blur-2xl rounded-2xl;
+    background-color: rgba(255, 255, 255, 0.055);
+    border: 1px solid var(--seeket-border-strong);
+    box-shadow:
+      0 1px 0 0 rgba(255, 255, 255, 0.06) inset,
+      0 24px 48px -20px rgba(0, 0, 0, 0.75);
   }
 
   .text-gradient {
     @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(to right, var(--seeket-red-vibrant), var(--seeket-orange));
+    background-image: linear-gradient(95deg, var(--seeket-orange), var(--seeket-red-vibrant) 65%);
+  }
+
+  /* Tipografía numérica (precios, contadores): tabular + tracking negativo → look "dashboard". */
+  .nums {
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
   }
 
   .btn-primary {
-    @apply px-6 py-3 rounded-xl font-semibold transition-all duration-300 active:scale-95;
-    background: linear-gradient(to right, var(--seeket-red-vibrant), var(--seeket-orange));
+    @apply px-5 py-2.5 rounded-xl font-semibold transition-all duration-300 active:scale-[0.97] focus:outline-none;
+    background: linear-gradient(95deg, var(--seeket-orange), var(--seeket-red-vibrant) 85%);
+    box-shadow: 0 8px 20px -6px rgba(250, 57, 52, 0.45);
+  }
+  .btn-primary:focus-visible {
+    box-shadow: 0 8px 20px -6px rgba(250, 57, 52, 0.45), 0 0 0 2px var(--seeket-dark), 0 0 0 4px rgba(255, 172, 49, 0.55);
   }
   .btn-primary:hover {
-    box-shadow: 0 10px 15px -3px rgba(250, 57, 52, 0.5), 0 4px 6px -4px rgba(250, 57, 52, 0.5);
+    box-shadow: 0 10px 26px -6px rgba(250, 57, 52, 0.6);
+    transform: translateY(-1px);
   }
 
   .btn-secondary {
-    @apply px-6 py-3 rounded-xl font-semibold transition-all duration-300;
-    @apply backdrop-blur-md active:scale-95;
-    background-color: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    @apply px-5 py-2.5 rounded-xl font-semibold transition-all duration-300 active:scale-[0.97];
+    background-color: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--seeket-border-strong);
   }
   .btn-secondary:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-    border-color: rgba(255, 255, 255, 0.3);
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.22);
   }
 
   .custom-scrollbar {
     scrollbar-width: thin;
-    scrollbar-color: rgba(250, 57, 52, 0.5) rgba(255, 255, 255, 0.05);
+    scrollbar-color: rgba(250, 57, 52, 0.45) rgba(255, 255, 255, 0.04);
   }
-
   .custom-scrollbar::-webkit-scrollbar {
-    width: 6px;
+    width: 5px;
+    height: 5px;
   }
-
   .custom-scrollbar::-webkit-scrollbar-track {
-    @apply rounded-full;
-    background-color: rgba(255, 255, 255, 0.05);
+    background-color: rgba(255, 255, 255, 0.03);
   }
-
   .custom-scrollbar::-webkit-scrollbar-thumb {
     @apply rounded-full;
-    background-color: rgba(250, 57, 52, 0.5);
+    background-color: rgba(250, 57, 52, 0.45);
   }
-
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
     background-color: var(--seeket-red-vibrant);
   }
 
   @keyframes video-simulate {
-    0%, 100% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
+    0%,
+    100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
   }
   .video-simulate {
     background: linear-gradient(
       135deg,
-      rgba(154, 46, 46, 0.4) 0%,
-      rgba(250, 57, 52, 0.3) 25%,
-      rgba(255, 172, 49, 0.35) 50%,
-      rgba(250, 57, 52, 0.3) 75%,
-      rgba(154, 46, 46, 0.4) 100%
+      rgba(154, 46, 46, 0.35) 0%,
+      rgba(250, 57, 52, 0.28) 25%,
+      rgba(255, 172, 49, 0.3) 50%,
+      rgba(250, 57, 52, 0.28) 75%,
+      rgba(154, 46, 46, 0.35) 100%
     );
     background-size: 200% 200%;
-    animation: video-simulate 5s ease-in-out infinite;
+    animation: video-simulate 6s ease-in-out infinite;
+  }
+
+  /* Fondo t\u00e9cnico: grid fino + pulso lent\u00edsimo. Reemplaza las burbujas difuminadas. */
+  @keyframes grid-pulse {
+    0%,
+    100% {
+      opacity: 0.3;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+  .bg-grid-lines {
+    background-image: linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+    background-size: 44px 44px;
+    animation: grid-pulse 9s ease-in-out infinite;
+  }
+
+  /* Bottom sheets mobile: respeta el notch/home indicator de iOS. */
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  /* Foco de teclado consistente en toda la app — reemplaza el outline default del navegador. */
+  .focus-ring {
+    @apply focus:outline-none focus-visible:outline-none;
+  }
+  .focus-ring:focus-visible {
+    box-shadow: 0 0 0 2px var(--seeket-dark), 0 0 0 4px rgba(255, 172, 49, 0.55);
+  }
+
+  @keyframes sheet-up {
+    from {
+      transform: translateY(100%);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+  .animate-sheet-up {
+    animation: sheet-up 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* Hint de swipe (mobile, primera vez) — entra, se sostiene, se desvanece sola. */
+  @keyframes hint-fade {
+    0%,
+    100% {
+      opacity: 0;
+    }
+    12%,
+    82% {
+      opacity: 1;
+    }
+  }
+  .animate-hint-fade {
+    animation: hint-fade 3.2s ease-in-out forwards;
   }
 }

@@ -2,99 +2,108 @@
 
 import { useEffect, useRef } from 'react';
 
-interface Bubble {
+interface Glow {
   x: number;
   y: number;
   size: number;
-  speed: number;
+  vx: number;
+  vy: number;
   opacity: number;
   color: string;
 }
 
+/**
+ * Fondo ambiental — v2.
+ *
+ * Antes: burbujas de color difuminadas flotando (estética genérica de landing
+ * generada por IA). Ahora: grid técnico fino (vía CSS, capa aparte) + un par de
+ * glows de marca MUY sutiles y lentos en canvas, que dan profundidad sin competir
+ * con el contenido. La sensación buscada es "panel de producto/dev-tool", no
+ * "hero de marketing".
+ */
 export default function AnimatedBubbles() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
+    const dpr = typeof window !== 'undefined' ? Math.min(window.devicePixelRatio || 1, 2) : 1;
+
     const resizeCanvas = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      canvas.width = window.innerWidth * dpr;
+      canvas.height = window.innerHeight * dpr;
+      canvas.style.width = `${window.innerWidth}px`;
+      canvas.style.height = `${window.innerHeight}px`;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
 
+    // Solo 3 glows, grandes y muy tenues: profundidad, no ruido visual.
     const colors = ['#fa3934', '#ffac31', '#9a2e2e'];
-    const bubbles: Bubble[] = [];
+    const glows: Glow[] = Array.from({ length: 3 }).map((_, i) => ({
+      x: (window.innerWidth / 3) * (i + 0.5) + (Math.random() - 0.5) * 200,
+      y: window.innerHeight * (0.25 + Math.random() * 0.5),
+      size: 420 + Math.random() * 180,
+      vx: (Math.random() - 0.5) * 0.06,
+      vy: (Math.random() - 0.5) * 0.06,
+      opacity: 0.05 + Math.random() * 0.04,
+      color: colors[i % colors.length],
+    }));
 
-    // Crear burbujas iniciales
-    for (let i = 0; i < 15; i++) {
-      bubbles.push({
-        x: Math.random() * canvas.width,
-        y: canvas.height + Math.random() * 200,
-        size: Math.random() * 100 + 50,
-        speed: Math.random() * 0.5 + 0.2,
-        opacity: Math.random() * 0.3 + 0.1,
-        color: colors[Math.floor(Math.random() * colors.length)],
-      });
-    }
-
+    let raf = 0;
     const animate = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
 
-      bubbles.forEach((bubble) => {
-        // Mover burbuja hacia arriba
-        bubble.y -= bubble.speed;
+      for (const g of glows) {
+        g.x += g.vx;
+        g.y += g.vy;
+        if (g.x < -g.size) g.x = window.innerWidth + g.size;
+        if (g.x > window.innerWidth + g.size) g.x = -g.size;
+        if (g.y < -g.size) g.y = window.innerHeight + g.size;
+        if (g.y > window.innerHeight + g.size) g.y = -g.size;
 
-        // Si sale de la pantalla, reiniciar abajo
-        if (bubble.y + bubble.size < 0) {
-          bubble.y = canvas.height + bubble.size;
-          bubble.x = Math.random() * canvas.width;
-        }
-
-        // Dibujar burbuja con blur
-        ctx.save();
-        ctx.globalAlpha = bubble.opacity;
-        ctx.fillStyle = bubble.color;
-        ctx.beginPath();
-        ctx.arc(bubble.x, bubble.y, bubble.size, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Aplicar blur manualmente con gradiente
-        const gradient = ctx.createRadialGradient(
-          bubble.x,
-          bubble.y,
-          0,
-          bubble.x,
-          bubble.y,
-          bubble.size
-        );
-        gradient.addColorStop(0, `${bubble.color}${Math.floor(bubble.opacity * 255).toString(16).padStart(2, '0')}`);
-        gradient.addColorStop(1, `${bubble.color}00`);
+        const gradient = ctx.createRadialGradient(g.x, g.y, 0, g.x, g.y, g.size);
+        gradient.addColorStop(0, `${g.color}${Math.round(g.opacity * 255).toString(16).padStart(2, '0')}`);
+        gradient.addColorStop(1, `${g.color}00`);
         ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(g.x, g.y, g.size, 0, Math.PI * 2);
         ctx.fill();
-        ctx.restore();
-      });
+      }
 
-      requestAnimationFrame(animate);
+      raf = requestAnimationFrame(animate);
     };
-
     animate();
 
     return () => {
       window.removeEventListener('resize', resizeCanvas);
+      cancelAnimationFrame(raf);
     };
   }, []);
 
   return (
-    <canvas
-      ref={canvasRef}
-      className="fixed inset-0 pointer-events-none z-[1]"
-      style={{ opacity: 0.4 }}
-    />
+    <div className="pointer-events-none fixed inset-0 z-[1] overflow-hidden">
+      {/* Capa 1: grid técnico fino, se desvanece hacia los bordes */}
+      <div
+        className="bg-grid-lines absolute inset-0"
+        style={{
+          maskImage: 'radial-gradient(ellipse 80% 60% at 50% 30%, black 40%, transparent 85%)',
+          WebkitMaskImage: 'radial-gradient(ellipse 80% 60% at 50% 30%, black 40%, transparent 85%)',
+        }}
+      />
+      {/* Capa 2: glows de marca, muy tenues, movimiento casi imperceptible */}
+      <canvas ref={canvasRef} style={{ opacity: 0.9 }} />
+      {/* Capa 3: grano sutil para romper el flat de los degradados oscuros */}
+      <svg className="absolute inset-0 h-full w-full opacity-[0.025]" aria-hidden>
+        <filter id="grain">
+          <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch" />
+        </filter>
+        <rect width="100%" height="100%" filter="url(#grain)" />
+      </svg>
+    </div>
   );
 }
